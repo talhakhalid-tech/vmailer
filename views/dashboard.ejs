@@ -1,0 +1,190 @@
+<!-- <h1>For dynamic content see this @talha</h1> -->
+<!-- <h1><%= name %></h1> -->
+
+<!-- <div id="loader" class="d-none">
+  <div class="loader-bg d-flex align-items-center justify-content-center">
+    <div class="d-flex flex-column justify-content-center align-items-center">
+      <div class="loader"></div>
+      <p class="font-weight-bold p-2">Processing...</p>
+    </div>
+  </div>
+</div> -->
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="pt-4 pb-3">Emailer</h1>
+    </div>
+  </div>
+
+  <div class="row pb-5">
+    <div class="col-md-12">
+      <form
+        id="emailer"
+        name="emailer"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="form-group">
+          <label for="inputSubject">Sender Email *</label>
+          <input
+            type="email"
+            class="form-control"
+            id="inputEmail4"
+            name="email_sender"
+            placeholder="name@example.com"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputPassword4">File Attachment(s)</label>
+            <div class="custom-file">
+              <input
+                type="file"
+                id="attachments"
+                name="email_attachments"
+                multiple="multiple"
+              />
+            </div>
+          </div>
+          <!-- <div class="form-group col-md-6">
+            <label for="inputReply4">To *</label>
+            <input
+              type="email"
+              class="form-control"
+              id="inputReply4"
+              name="email_replyto"
+              placeholder="email@example.com"
+            />
+          </div> -->
+        </div>
+        <div class="form-group">
+          <label for="inputSubject">Subject *</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputSubject"
+            name="email_subject"
+            placeholder="Enter the subject for your email"
+            required
+          />
+        </div>
+        <!-- <div class="form-group">
+          <label for="inputPassword4">Email List * ( CSV file accepted )</label>
+          <div class="custom-file">
+            <input type="file" name="email_list" id="customFile" />
+          </div>
+        </div> -->
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="inputBody">Message Body * </label>
+            <textarea
+              class="form-control"
+              id="inputBody"
+              rows="15"
+              name="email_body"
+              required
+            ></textarea>
+          </div>
+        </div>
+        <div class="form-group text-center">
+          <div class="form-check">
+            <label class="form-check-label" for="gridCheck">
+              Message Type:
+            </label>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input
+                type="radio"
+                id="customRadioInline1"
+                name="message_type"
+                value="html"
+                class="custom-control-input"
+              />
+              <label class="custom-control-label" for="customRadioInline1"
+                >HTML</label
+              >
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input
+                type="radio"
+                id="customRadioInline2"
+                name="message_type"
+                checked=""
+                value="text"
+                class="custom-control-input"
+              />
+              <label class="custom-control-label" for="customRadioInline2"
+                >Plain Text</label
+              >
+            </div>
+          </div>
+          <br />
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="mailBox"
+                >Mail Box * (List of Emails to whom mail is to be sent)
+              </label>
+              <textarea
+                class="form-control"
+                id="mailBox"
+                rows="12"
+                name="mail_mox"
+                required
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <button type="submit" id="sendEmail" class="btn btn-success">
+          Send Email
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  let attachments;
+  let formData1 = null;
+  let formData2 = null;
+
+  document
+    .getElementById("attachments")
+    .addEventListener("change", async (event) => {
+      if (event.target.files.length > 0) {
+        const formData = new FormData();
+        formData.append("file1", event.target.files[0]);
+        await fetch("/user/me/file1", {
+          method: "POST",
+          body: formData,
+        });
+      }
+    });
+
+  document.getElementById("emailer").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const sender = document.getElementById("inputEmail4").value;
+    const emailTo = document.getElementById("mailBox").value;
+    const subject = document.getElementById("inputSubject").value;
+    const body = document.getElementById("inputBody").value;
+    const html = document.getElementById("customRadioInline1");
+    let selectedRadio = null;
+    html.checked ? (selectedRadio = "html") : (selectedRadio = "text");
+    const data = {
+      sender,
+      emailTo,
+      subject,
+      body,
+      selectedRadio,
+    };
+    const response = await fetch("/sendEmail", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((response) => {
+      location.reload();
+    });
+  });
+</script>
